@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="utf-8"><title>登录</title>
+<style>
+body{font-family:"Microsoft YaHei",sans-serif;max-width:400px;margin:60px auto;padding:0 20px}
+input{display:block;width:100%;margin:10px 0;padding:10px;box-sizing:border-box}
+button{padding:10px 24px;cursor:pointer}
+#msg{color:#dc2626;margin-top:10px}
+</style>
+</head>
+<body>
+<h2>登录</h2>
+<input id="username" placeholder="用户名">
+<input id="password" type="password" placeholder="密码">
+<button id="login-btn">登录</button>
+<div id="msg"></div>
+<script>
+document.getElementById("login-btn").onclick = async function () {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const res = await fetch("/login", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({username: username, password: password})
+  });
+  if (!res.ok) { document.getElementById("msg").textContent = "登录失败"; return; }
+  const data = await res.json();
+  localStorage.setItem("token", data.token);
+  location.href = "/";
+};
+</script>
+</body>
+</html>

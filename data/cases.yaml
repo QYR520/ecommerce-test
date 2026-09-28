@@ -1,0 +1,36 @@
+# 电商金额计算测试用例（YAML 数据驱动）
+amount_cases:
+  - name: 满99包邮_无折扣
+    items: [{product_id: P3, quantity: 2}]   # 手机壳 59×2=118
+    subtotal: 118.0
+    freight: 0.0
+    discount: 0.0
+    pay: 118.0
+
+  - name: 不满99_收8元运费
+    items: [{product_id: P4, quantity: 2}]   # 数据线 39×2=78
+    subtotal: 78.0
+    freight: 8.0
+    discount: 0.0
+    pay: 86.0
+
+  - name: 满200减10
+    items: [{product_id: P2, quantity: 1}]   # 蓝牙耳机 299
+    subtotal: 299.0
+    freight: 0.0
+    discount: 10.0
+    pay: 289.0
+
+  - name: 恰好99_包邮边界
+    items: [{product_id: P5, quantity: 1}]   # 充电器 99
+    subtotal: 99.0
+    freight: 0.0
+    discount: 0.0
+    pay: 99.0
+
+  - name: 多件不满99_收8运费
+    items: [{product_id: P8, quantity: 5}]   # 钢化膜 19×5=95
+    subtotal: 95.0
+    freight: 8.0
+    discount: 0.0
+    pay: 103.0

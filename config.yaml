@@ -1,0 +1,14 @@
+# 电商被测系统配置
+app:
+  host: 127.0.0.1
+  port: 5000
+  db_path: shop.db           # 相对 run.py 所在目录
+  cache_ttl: 60              # 商品缓存的存活秒数（模拟 Redis TTL）
+  # 缺陷开关：置 true 表示「下单扣库存后不失效商品缓存」，
+  # 会制造「接口(页面)展示的库存 与 数据库真实库存不一致」的 bug，
+  # 供自动化「页面↔数据库」对账用例抓取。演示完改回 false。
+  flaw:
+    stale_cache: false
+
+auth:
+  token_ttl: 3600            # 登录 token 有效期（秒）

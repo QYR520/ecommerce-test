@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="utf-8"><title>商品列表</title>
+<style>
+body{font-family:"Microsoft YaHei",sans-serif;max-width:640px;margin:30px auto;padding:0 20px}
+nav{margin-bottom:16px}nav a{margin-right:14px}
+.item{border-bottom:1px solid #eee;padding:12px 0;display:flex;gap:16px;align-items:center}
+.name{font-weight:700;min-width:90px}
+.price{color:#d97706}
+.stock{color:#6b7280;font-size:13px}
+button{padding:6px 14px;cursor:pointer}
+#status{color:#16a34a;margin-top:10px}
+</style>
+</head>
+<body>
+<nav><a href="/">商品</a><a href="/cart_page">购物车</a><span id="login-state"></span></nav>
+<h2>商品列表</h2>
+<div id="products"></div>
+<div id="status"></div>
+<script>
+const token = localStorage.getItem("token");
+if (token) document.getElementById("login-state").textContent = "（已登录）";
+
+async function load() {
+  const res = await fetch("/products");
+  const data = await res.json();
+  document.getElementById("products").innerHTML = data.products.map(p => `
+    <div class="item" data-testid="product" data-id="${p.id}">
+      <span class="name" data-testid="name">${p.name}</span>
+      <span class="price" data-testid="price">¥${p.price}</span>
+      <span class="stock" data-testid="stock">库存 ${p.stock}</span>
+      <button data-testid="add-${p.id}" onclick="addCart('${p.id}')">加购</button>
+    </div>`).join("");
+}
+async function addCart(pid) {
+  if (!token) { location.href = "/login"; return; }
+  const res = await fetch("/cart", {
+    method: "POST", headers: {"Content-Type": "application/json", "Authorization": "Bearer " + token},
+    body: JSON.stringify({product_id: pid, quantity: 1})
+  });
+  document.getElementById("status").textContent = res.ok ? "已加入购物车" : "加购失败";
+}
+load();
+</script>
+</body>
+</html>
