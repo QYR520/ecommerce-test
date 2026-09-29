@@ -301,6 +301,16 @@ def create_app(config):
         conn.commit()
         return jsonify({"ok": True, "deleted": cur.rowcount})
 
+    @app.route("/cart", methods=["DELETE"])
+    def clear_cart():
+        user = current_user()
+        if not user:
+            return jsonify({"error": "未登录"}), 401
+        conn = get_conn()
+        cur = conn.execute("DELETE FROM carts WHERE user_id=?", (user["id"],))
+        conn.commit()
+        return jsonify({"ok": True, "deleted": cur.rowcount})
+
     # ============ 优惠券域 ============
     @app.route("/coupons", methods=["GET"])
     def list_coupons():

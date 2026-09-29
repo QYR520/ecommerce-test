@@ -2,33 +2,39 @@
 <html lang="zh">
 <head><meta charset="utf-8"><title>商品列表</title>
 <style>
-body{font-family:"Microsoft YaHei",sans-serif;max-width:640px;margin:30px auto;padding:0 20px}
+body{font-family:"Microsoft YaHei",sans-serif;max-width:760px;margin:30px auto;padding:0 20px}
 nav{margin-bottom:16px}nav a{margin-right:14px}
-.item{border-bottom:1px solid #eee;padding:12px 0;display:flex;gap:16px;align-items:center}
-.name{font-weight:700;min-width:90px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{border:1px solid #eee;border-radius:10px;padding:12px;text-align:center}
+.card img{width:100%;height:110px;object-fit:cover;border-radius:8px;background:#f3f4f6}
+.name{font-weight:700;margin:8px 0 2px}
 .price{color:#d97706}
-.stock{color:#6b7280;font-size:13px}
-button{padding:6px 14px;cursor:pointer}
-#status{color:#16a34a;margin-top:10px}
+.stock{color:#6b7280;font-size:12px}
+button{padding:6px 14px;cursor:pointer;margin-top:6px}
+#status{color:#16a34a;margin-top:12px}
 </style>
 </head>
 <body>
 <nav><a href="/">商品</a><a href="/cart_page">购物车</a><span id="login-state"></span></nav>
 <h2>商品列表</h2>
-<div id="products"></div>
+<div class="grid" id="products"></div>
 <div id="status"></div>
 <script>
 const token = localStorage.getItem("token");
 if (token) document.getElementById("login-state").textContent = "（已登录）";
 
+const IMG_BASE = "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?image_size=square&prompt=";
+function imgUrl(name) { return IMG_BASE + encodeURIComponent(name + " 电商商品白底图"); }
+
 async function load() {
   const res = await fetch("/products");
   const data = await res.json();
   document.getElementById("products").innerHTML = data.products.map(p => `
-    <div class="item" data-testid="product" data-id="${p.id}">
-      <span class="name" data-testid="name">${p.name}</span>
-      <span class="price" data-testid="price">¥${p.price}</span>
-      <span class="stock" data-testid="stock">库存 ${p.stock}</span>
+    <div class="card" data-testid="product" data-id="${p.id}">
+      <img src="${imgUrl(p.name)}" alt="${p.name}" onerror="this.style.visibility='hidden'">
+      <div class="name" data-testid="name">${p.name}</div>
+      <div class="price" data-testid="price">¥${p.price}</div>
+      <div class="stock" data-testid="stock">库存 ${p.stock}</div>
       <button data-testid="add-${p.id}" onclick="addCart('${p.id}')">加购</button>
     </div>`).join("");
 }
